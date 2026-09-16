@@ -1,0 +1,9 @@
+{
+  "name": "gift-deliveries",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Google Form + Twilio SMS gift delivery coordination (Google Apps Script)",
+  "scripts": {
+    "test": "node --test test/*.test.js"
+  }
+}
