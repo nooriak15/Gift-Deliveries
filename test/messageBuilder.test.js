@@ -33,10 +33,12 @@ test('normalizeFormResponse resolves the Hospital branch', () => {
   const fields = normalizeFormResponse(namedValues({
     [FIELDS.DELIVERY_LOCATION]: ['Hospital'],
     [FIELDS.HOSPITAL_NAME]: ['Cedars-Sinai'],
-    [FIELDS.HOSPITAL_ROOM]: ['4B-12']
+    [FIELDS.HOSPITAL_ROOM]: ['4B-12'],
+    [FIELDS.HOSPITAL_LEGAL_NAME]: ['Ariel Cohen']
   }));
   assert.equal(fields.deliveryLocationType, 'Hospital');
   assert.equal(fields.address, 'Cedars-Sinai, Room/Unit 4B-12');
+  assert.equal(fields.hospitalLegalName, 'Ariel Cohen');
 });
 
 test('normalizeFormResponse resolves the Other branch', () => {
@@ -99,11 +101,31 @@ test('buildCoordinatorMessage reflects the Hospital + packing-needed combination
     [FIELDS.DELIVERY_LOCATION]: ['Hospital'],
     [FIELDS.HOSPITAL_NAME]: ['Cedars-Sinai'],
     [FIELDS.HOSPITAL_ROOM]: ['4B-12'],
+    [FIELDS.HOSPITAL_LEGAL_NAME]: ['Ari'],
     [FIELDS.NEEDS_PACKING]: [CHOICES.NEEDS_PACKING.YES],
     [FIELDS.ADDITIONAL_NOTES]: ['Call security desk on arrival']
   }));
   const message = buildCoordinatorMessage(fields);
   assert.match(message, /📍 DELIVER TO: Hospital — Cedars-Sinai, Room\/Unit 4B-12/);
+  assert.match(message, /LEGAL NAME \(for check-in\): Ari$/m);
   assert.match(message, /PACKING: Yes, it needs to be packed/);
   assert.match(message, /NOTES: Call security desk on arrival/);
+});
+
+test('buildCoordinatorMessage flags a hospital legal name that differs from the Child name', () => {
+  const fields = normalizeFormResponse(namedValues({
+    [FIELDS.CHILD_NAME]: ['Ari'],
+    [FIELDS.DELIVERY_LOCATION]: ['Hospital'],
+    [FIELDS.HOSPITAL_NAME]: ['Cedars-Sinai'],
+    [FIELDS.HOSPITAL_ROOM]: ['4B-12'],
+    [FIELDS.HOSPITAL_LEGAL_NAME]: ['Ariel Cohen']
+  }));
+  const message = buildCoordinatorMessage(fields);
+  assert.match(message, /LEGAL NAME \(for check-in\): Ariel Cohen \(differs from Child name above\)/);
+});
+
+test('buildCoordinatorMessage omits the legal-name line for non-hospital deliveries', () => {
+  const fields = normalizeFormResponse(namedValues());
+  const message = buildCoordinatorMessage(fields);
+  assert.doesNotMatch(message, /LEGAL NAME/);
 });

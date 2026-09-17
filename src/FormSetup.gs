@@ -51,9 +51,13 @@ function SETUP_createGiftDeliveryForm() {
   var pbHospital = form.addPageBreakItem().setTitle('Hospital Details');
   form.addTextItem().setTitle(FIELDS.HOSPITAL_NAME).setRequired(true);
   form.addTextItem().setTitle(FIELDS.HOSPITAL_ROOM).setRequired(true);
-  form.addCheckboxItem()
-    .setTitle('Confirm full legal name')
-    .setChoiceValues([FIELDS.HOSPITAL_LEGAL_NAME_CONFIRM])
+  // An actual re-entry field, not just a confirmation checkbox — if the
+  // "Child name" answer above was a nickname, this is where the case
+  // manager can enter the correct name, and it's what shows up in the
+  // coordinator message so the security desk gets the right name.
+  form.addTextItem()
+    .setTitle(FIELDS.HOSPITAL_LEGAL_NAME)
+    .setHelpText('Required for hospital security to allow visitor check-in. If different from the name entered above (e.g. a nickname), enter the full legal name here.')
     .setRequired(true);
 
   // --- Branch: Other ---

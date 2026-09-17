@@ -15,7 +15,7 @@ var FIELDS = {
   HOME_ADDRESS: 'Home address',
   HOSPITAL_NAME: 'Hospital name',
   HOSPITAL_ROOM: 'Room/unit number',
-  HOSPITAL_LEGAL_NAME_CONFIRM: "I confirm the child's name entered above is their full legal name, as required for hospital visitor check-in.",
+  HOSPITAL_LEGAL_NAME: "Child's full legal name (for hospital check-in)",
   OTHER_ADDRESS: 'Address',
   GIFT_REQUEST_DETAILS: 'Gift/delivery requests',
   NEEDS_PACKING: 'Does this gift need to be packed?',
