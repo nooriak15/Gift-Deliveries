@@ -2,8 +2,15 @@
 
 Phase 1 implementation of the PRD: a Google Form that case managers fill
 out for a gift delivery request, which writes to a linked Google Sheet and
-triggers a Google Apps Script that texts the delivery coordinator (the
-director) a single, complete SMS via Twilio — no manual relay needed.
+triggers a Google Apps Script that notifies the delivery coordinator (the
+director) with a single, complete message — no manual relay needed.
+
+**Notification channel:** the coordinator message can go out by **email**
+(via Apps Script's built-in `MailApp` — no external account needed) or by
+**Twilio SMS**, controlled by the `NOTIFICATION_CHANNEL` script property.
+It defaults to **email**, so the workflow can be piloted with staff first;
+flip it to `SMS` once Twilio is set up and the team is ready to switch —
+no code changes needed either way.
 
 Phase 2 (a brief broadcast to the volunteer group chat, and a full-detail
 text to whichever volunteer claims the delivery) is **not** built here; the
@@ -14,7 +21,7 @@ code is structured so it can be added later without reworking Phase 1 (see
 
 ```
 Google Form → Google Sheet (new row) → onFormSubmit trigger →
-  build the coordinator message → Twilio API → director's phone
+  build the coordinator message → email (MailApp) or Twilio SMS → director
 ```
 
 - **`src/FormSetup.gs`** — run once. Builds the Google Form (all fields and
@@ -26,14 +33,19 @@ Google Form → Google Sheet (new row) → onFormSubmit trigger →
 - **`src/MessageBuilder.gs`** — pure functions: turn the trigger's raw
   `e.namedValues` into a flat object (resolving the Home/Hospital/Other and
   packing Yes/No branches to whichever columns the sheet populated), then
-  render the coordinator SMS text. No Google services touched, so it's
+  render the coordinator message text. No Google services touched, so it's
   unit tested directly (`test/messageBuilder.test.js`).
-- **`src/Twilio.gs`** — sends the SMS via `UrlFetchApp` against the Twilio
-  Messages API (no external library needed).
-- **`src/Config.gs`** — reads Twilio credentials and the coordinator's
-  phone number from Script Properties, never from source.
+- **`src/Email.gs`** — sends the coordinator message via `MailApp` (Apps
+  Script's built-in Gmail sending, tied to whichever Google account owns
+  the script — no external account needed). This is the default channel.
+- **`src/Twilio.gs`** — sends the message as an SMS via `UrlFetchApp`
+  against the Twilio Messages API (no external library needed). Used when
+  `NOTIFICATION_CHANNEL` is set to `SMS`.
+- **`src/Config.gs`** — reads the notification channel, Twilio credentials,
+  and the coordinator's email/phone number from Script Properties, never
+  from source.
 - **`src/Main.gs`** — the `onFormSubmit(e)` handler that wires the above
-  together.
+  together and picks email vs. SMS.
 
 ## One-time setup
 
@@ -58,15 +70,41 @@ Google Form → Google Sheet (new row) → onFormSubmit trigger →
      never gets installed twice.
 3. **Set script properties.** In the editor: **Project Settings > Script
    properties**, add:
+   - `COORDINATOR_EMAIL` — the director's email address (required while
+     `NOTIFICATION_CHANNEL` is `EMAIL`, the default — see below).
+   - `EMOJI_STYLE` (optional) — set to `false` for a plain-text/all-caps
+     style instead of the emoji-anchored template; defaults to emoji.
+
+   The Twilio properties below are only needed once you switch
+   `NOTIFICATION_CHANNEL` to `SMS` (see [Switching to SMS](#switching-to-sms)):
    - `TWILIO_ACCOUNT_SID`
    - `TWILIO_AUTH_TOKEN`
    - `TWILIO_FROM_NUMBER` — your Twilio number, e.g. `+15551234567`
    - `COORDINATOR_PHONE_NUMBER` — the director's number, e.g. `+15559876543`
-   - `EMOJI_STYLE` (optional) — set to `false` for a plain-text/all-caps
-     style instead of the emoji-anchored template; defaults to emoji.
 4. **Test end-to-end.** Open the live form URL, submit a test response,
-   and confirm the coordinator SMS arrives with the details filled in
-   correctly for each branch (Home/Hospital/Other, packing Yes/No).
+   and confirm the coordinator email (or SMS, once switched) arrives with
+   the details filled in correctly for each branch (Home/Hospital/Other,
+   packing Yes/No).
+
+## Switching to SMS
+
+The workflow defaults to email so it can be piloted with staff with zero
+external setup. Once the team is happy with it and ready to move to SMS:
+
+1. Set up a **paid** (non-trial) Twilio account and buy a number — a
+   toll-free number is the easiest to get sending custom message bodies
+   without full A2P 10DLC registration. Note that a Twilio **trial**
+   account cannot send this project's messages at all: trial accounts are
+   restricted to a small set of predefined templates and can't send
+   arbitrary custom text.
+2. Set the four `TWILIO_*` / `COORDINATOR_PHONE_NUMBER` script properties
+   listed above.
+3. Set `NOTIFICATION_CHANNEL` to `SMS`.
+4. Submit a test form response to confirm the text arrives.
+
+No code changes are needed for the switch — `Main.gs` reads
+`NOTIFICATION_CHANNEL` on every submission and picks the channel
+accordingly.
 
 ## Running the unit tests
 

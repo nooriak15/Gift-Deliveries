@@ -33,6 +33,10 @@ var CHOICES = {
 
 // Script Properties (Project Settings > Script properties) read by Config.gs.
 var CONFIG_KEYS = {
+  // "EMAIL" (no external account needed, good for piloting with staff) or
+  // "SMS" (requires the Twilio properties below). Defaults to EMAIL.
+  NOTIFICATION_CHANNEL: 'NOTIFICATION_CHANNEL',
+  COORDINATOR_EMAIL: 'COORDINATOR_EMAIL',
   TWILIO_ACCOUNT_SID: 'TWILIO_ACCOUNT_SID',
   TWILIO_AUTH_TOKEN: 'TWILIO_AUTH_TOKEN',
   TWILIO_FROM_NUMBER: 'TWILIO_FROM_NUMBER',

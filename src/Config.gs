@@ -31,6 +31,18 @@ function getCoordinatorPhoneNumber() {
   return getRequiredProperty_(CONFIG_KEYS.COORDINATOR_PHONE_NUMBER);
 }
 
+function getCoordinatorEmail() {
+  return getRequiredProperty_(CONFIG_KEYS.COORDINATOR_EMAIL);
+}
+
+// Defaults to "EMAIL" — no external account setup, good for piloting with
+// staff before committing to Twilio/SMS. Set NOTIFICATION_CHANNEL to "SMS"
+// as a script property to switch, once Twilio is configured and ready.
+function getNotificationChannel() {
+  var value = PropertiesService.getScriptProperties().getProperty(CONFIG_KEYS.NOTIFICATION_CHANNEL);
+  return value === 'SMS' ? 'SMS' : 'EMAIL';
+}
+
 // Defaults to the PRD's emoji template. Set the EMOJI_STYLE script
 // property to "false" to switch to a plain-text/all-caps style.
 function isEmojiStyleEnabled() {
