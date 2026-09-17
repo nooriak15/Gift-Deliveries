@@ -11,7 +11,7 @@
  *   if (getNotificationChannel() === 'SMS') {
  *     sendSms(getCoordinatorPhoneNumber(), message);
  *   } else {
- *     sendCoordinatorEmail(getCoordinatorEmail(), 'New Gift Delivery Request', message);
+ *     sendCoordinatorEmail(getCoordinatorEmail(), 'Gift Delivery Request for ' + fields.childName, message);
  *   }
  */
 function onFormSubmit(e) {
@@ -23,7 +23,7 @@ function onFormSubmit(e) {
 
     var fields = normalizeFormResponse(namedValues);
     var message = buildCoordinatorMessage(fields, isEmojiStyleEnabled());
-    sendCoordinatorEmail(getCoordinatorEmail(), 'New Gift Delivery Request', message);
+    sendCoordinatorEmail(getCoordinatorEmail(), 'Gift Delivery Request for ' + fields.childName, message);
   } catch (err) {
     Logger.log('onFormSubmit failed: ' + err);
     throw err;
