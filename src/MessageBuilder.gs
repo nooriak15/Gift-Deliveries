@@ -62,7 +62,7 @@ function buildCoordinatorMessage(fields, emojiStyle) {
   var lines = [
     giftLabel,
     '',
-    'Child: ' + fields.childName + ', age ' + fields.childAge + ' (' + fields.clientType + ')',
+    fields.clientType + ': ' + fields.childName + ', age ' + fields.childAge,
     '',
     whenLabel + ': ' + fields.deliveryWindow,
     deliverToLabel + ': ' + fields.deliveryLocationType,

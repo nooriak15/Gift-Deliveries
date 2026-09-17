@@ -80,7 +80,7 @@ test('buildCoordinatorMessage renders the emoji template by default', () => {
   const fields = normalizeFormResponse(namedValues());
   const message = buildCoordinatorMessage(fields);
   assert.match(message, /^🎁 NEW GIFT REQUEST/);
-  assert.match(message, /Child: Ari, age 7 \(Client\)/);
+  assert.match(message, /^Client: Ari, age 7$/m);
   assert.match(message, /📅 WHEN: Anytime Friday, birthday is 9\/20/);
   assert.match(message, /📍 DELIVER TO: Home\n123 Main St, Los Angeles, CA/);
   assert.match(message, /PARENT: Dina Cohen \(555-123-4567\)/);
