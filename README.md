@@ -5,12 +5,13 @@ out for a gift delivery request, which writes to a linked Google Sheet and
 triggers a Google Apps Script that notifies the delivery coordinator (the
 director) with a single, complete message — no manual relay needed.
 
-**Notification channel:** the coordinator message can go out by **email**
-(via Apps Script's built-in `MailApp` — no external account needed) or by
-**Twilio SMS**, controlled by the `NOTIFICATION_CHANNEL` script property.
-It defaults to **email**, so the workflow can be piloted with staff first;
-flip it to `SMS` once Twilio is set up and the team is ready to switch —
-no code changes needed either way.
+**Notification channel:** the coordinator message goes out by **email**
+(via Apps Script's built-in `MailApp` — no external account needed) while
+the team pilots the workflow. The Twilio/SMS path (`src/Twilio.gs` and the
+Twilio-specific parts of `src/Config.gs`) is commented out for now — it's
+still there, ready to uncomment and wire back into `Main.gs` once Twilio
+is set up on a paid account and the team is ready to switch. See
+[Switching to SMS](#switching-to-sms).
 
 Phase 2 (a brief broadcast to the volunteer group chat, and a full-detail
 text to whichever volunteer claims the delivery) is **not** built here; the
@@ -88,8 +89,9 @@ Google Form → Google Sheet (new row) → onFormSubmit trigger →
 
 ## Switching to SMS
 
-The workflow defaults to email so it can be piloted with staff with zero
-external setup. Once the team is happy with it and ready to move to SMS:
+The workflow runs on email for now so it can be piloted with staff with
+zero external setup. The Twilio code is still in the repo, just commented
+out. Once the team is happy with it and ready to move to SMS:
 
 1. Set up a **paid** (non-trial) Twilio account and buy a number — a
    toll-free number is the easiest to get sending custom message bodies
@@ -97,14 +99,22 @@ external setup. Once the team is happy with it and ready to move to SMS:
    account cannot send this project's messages at all: trial accounts are
    restricted to a small set of predefined templates and can't send
    arbitrary custom text.
-2. Set the four `TWILIO_*` / `COORDINATOR_PHONE_NUMBER` script properties
-   listed above.
-3. Set `NOTIFICATION_CHANNEL` to `SMS`.
-4. Submit a test form response to confirm the text arrives.
-
-No code changes are needed for the switch — `Main.gs` reads
-`NOTIFICATION_CHANNEL` on every submission and picks the channel
-accordingly.
+2. In the Apps Script editor, uncomment:
+   - the `sendSms()` function in `Twilio.gs`
+   - `getTwilioAccountSid()`, `getTwilioAuthToken()`, `getTwilioFromNumber()`,
+     and `getCoordinatorPhoneNumber()` in `Config.gs`
+3. In `Main.gs`, replace the `sendCoordinatorEmail(...)` line in
+   `onFormSubmit` with:
+   ```javascript
+   if (getNotificationChannel() === 'SMS') {
+     sendSms(getCoordinatorPhoneNumber(), message);
+   } else {
+     sendCoordinatorEmail(getCoordinatorEmail(), 'New Gift Delivery Request', message);
+   }
+   ```
+4. Set the four `TWILIO_*` / `COORDINATOR_PHONE_NUMBER` script properties
+   listed above, and set `NOTIFICATION_CHANNEL` to `SMS`.
+5. Submit a test form response to confirm the text arrives.
 
 ## Running the unit tests
 

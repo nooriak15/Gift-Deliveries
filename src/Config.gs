@@ -15,21 +15,24 @@ function getRequiredProperty_(key) {
   return value;
 }
 
-function getTwilioAccountSid() {
-  return getRequiredProperty_(CONFIG_KEYS.TWILIO_ACCOUNT_SID);
-}
-
-function getTwilioAuthToken() {
-  return getRequiredProperty_(CONFIG_KEYS.TWILIO_AUTH_TOKEN);
-}
-
-function getTwilioFromNumber() {
-  return getRequiredProperty_(CONFIG_KEYS.TWILIO_FROM_NUMBER);
-}
-
-function getCoordinatorPhoneNumber() {
-  return getRequiredProperty_(CONFIG_KEYS.COORDINATOR_PHONE_NUMBER);
-}
+// DISABLED FOR NOW along with Twilio.gs's sendSms() — see the note there.
+// Uncomment these once Twilio is set up and NOTIFICATION_CHANNEL is
+// switched to "SMS".
+// function getTwilioAccountSid() {
+//   return getRequiredProperty_(CONFIG_KEYS.TWILIO_ACCOUNT_SID);
+// }
+//
+// function getTwilioAuthToken() {
+//   return getRequiredProperty_(CONFIG_KEYS.TWILIO_AUTH_TOKEN);
+// }
+//
+// function getTwilioFromNumber() {
+//   return getRequiredProperty_(CONFIG_KEYS.TWILIO_FROM_NUMBER);
+// }
+//
+// function getCoordinatorPhoneNumber() {
+//   return getRequiredProperty_(CONFIG_KEYS.COORDINATOR_PHONE_NUMBER);
+// }
 
 function getCoordinatorEmail() {
   return getRequiredProperty_(CONFIG_KEYS.COORDINATOR_EMAIL);
