@@ -67,18 +67,15 @@ function SETUP_createGiftDeliveryForm() {
     .setHelpText('What gifts, how many, the occasion (e.g. birthday or not), any physical or developmental limitations affecting play, and any religious standards (e.g. no Disney).')
     .setRequired(true);
 
-  // Choices are wired up below, once the packing-needed page break exists.
-  // Only the "Yes" choice branches — both "No" choices already carry their
-  // reason in the choice text, so they go straight through to the final page.
-  var needsPackingItem = form.addMultipleChoiceItem()
+  // Plain, non-branching question — no follow-up, since which gift needs
+  // wrapping is already covered by GIFT_REQUEST_DETAILS above.
+  form.addMultipleChoiceItem()
     .setTitle(FIELDS.NEEDS_PACKING)
-    .setRequired(true);
-
-  // --- Branch: packing needed ---
-  var pbPackingYes = form.addPageBreakItem().setTitle('Packing Details');
-  form.addParagraphTextItem()
-    .setTitle(FIELDS.PACKING_GIFT_KIND)
-    .setHelpText('So whoever packs it knows what they\'re wrapping.')
+    .setChoiceValues([
+      CHOICES.NEEDS_PACKING.ALREADY_PACKED,
+      CHOICES.NEEDS_PACKING.NOT_NEEDED,
+      CHOICES.NEEDS_PACKING.YES
+    ])
     .setRequired(true);
 
   // --- Converge: final page ---
@@ -94,13 +91,6 @@ function SETUP_createGiftDeliveryForm() {
   pbHome.setGoToPage(pbGiftPacking);
   pbHospital.setGoToPage(pbGiftPacking);
   pbOther.setGoToPage(pbGiftPacking);
-
-  needsPackingItem.setChoices([
-    needsPackingItem.createChoice(CHOICES.NEEDS_PACKING.ALREADY_PACKED, pbFinal),
-    needsPackingItem.createChoice(CHOICES.NEEDS_PACKING.NOT_NEEDED, pbFinal),
-    needsPackingItem.createChoice(CHOICES.NEEDS_PACKING.YES, pbPackingYes)
-  ]);
-  pbPackingYes.setGoToPage(pbFinal);
 
   pbFinal.setGoToPage(FormApp.PageNavigationType.SUBMIT);
 

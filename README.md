@@ -71,8 +71,10 @@ Google Form → Google Sheet (new row) → onFormSubmit trigger →
      never gets installed twice.
 3. **Set script properties.** In the editor: **Project Settings > Script
    properties**, add:
-   - `COORDINATOR_EMAIL` — the director's email address (required while
-     `NOTIFICATION_CHANNEL` is `EMAIL`, the default — see below).
+   - `COORDINATOR_EMAIL` — the director's email address, or a
+     comma-separated list (e.g. `a@example.org,b@example.org`) to notify
+     more than one person. Required while `NOTIFICATION_CHANNEL` is
+     `EMAIL` (the default).
    - `EMOJI_STYLE` (optional) — set to `false` for a plain-text/all-caps
      style instead of the emoji-anchored template; defaults to emoji.
 

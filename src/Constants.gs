@@ -19,17 +19,14 @@ var FIELDS = {
   OTHER_ADDRESS: 'Address',
   GIFT_REQUEST_DETAILS: 'Gift/delivery requests',
   NEEDS_PACKING: 'Does this gift need to be packed?',
-  PACKING_GIFT_KIND: 'What kind of gift?',
   ADDITIONAL_NOTES: 'Anything else we should know/keep in mind when organizing delivery?'
 };
 
 var CHOICES = {
   CLIENT_TYPE: ['Client', 'Sibling'],
   DELIVERY_LOCATION: ['Home', 'Hospital', 'Other'],
-  // A single question with the "no" reason folded directly into the choice
-  // text, rather than a separate Yes/No question plus a follow-up "Reason"
-  // question. Only NEEDS_PACKING.YES branches to the "What kind of gift?"
-  // follow-up page — see FormSetup.gs.
+  // A single, non-branching question — no follow-up question, since which
+  // gift needs wrapping is already covered by GIFT_REQUEST_DETAILS above.
   NEEDS_PACKING: {
     ALREADY_PACKED: "No, it's already packed in office",
     NOT_NEEDED: 'No, packing not needed',

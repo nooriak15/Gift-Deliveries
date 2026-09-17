@@ -12,9 +12,7 @@ function firstValue_(namedValues, key) {
 /**
  * Converts the onFormSubmit event's e.namedValues (question title -> [answer])
  * into a flat object, resolving the delivery-location branch (Home / Hospital
- * / Other) to whichever columns the form actually populated, and pulling in
- * the gift-kind follow-up only when the packing question's answer is
- * CHOICES.NEEDS_PACKING.YES.
+ * / Other) to whichever columns the form actually populated.
  */
 function normalizeFormResponse(namedValues) {
   var deliveryLocationType = firstValue_(namedValues, FIELDS.DELIVERY_LOCATION);
@@ -30,14 +28,7 @@ function normalizeFormResponse(namedValues) {
     address = firstValue_(namedValues, FIELDS.OTHER_ADDRESS);
   }
 
-  var needsPacking = firstValue_(namedValues, FIELDS.NEEDS_PACKING);
-  var packingStatus;
-  if (needsPacking === CHOICES.NEEDS_PACKING.YES) {
-    var giftKind = firstValue_(namedValues, FIELDS.PACKING_GIFT_KIND);
-    packingStatus = 'Needs wrapping' + (giftKind ? ' — ' + giftKind : '');
-  } else {
-    packingStatus = needsPacking || CHOICES.NEEDS_PACKING.NOT_NEEDED;
-  }
+  var packingStatus = firstValue_(namedValues, FIELDS.NEEDS_PACKING) || CHOICES.NEEDS_PACKING.NOT_NEEDED;
 
   return {
     childName: firstValue_(namedValues, FIELDS.CHILD_NAME),

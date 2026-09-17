@@ -50,10 +50,9 @@ test('normalizeFormResponse resolves the Other branch', () => {
 
 test('normalizeFormResponse resolves the "yes, needs packing" choice', () => {
   const fields = normalizeFormResponse(namedValues({
-    [FIELDS.NEEDS_PACKING]: [CHOICES.NEEDS_PACKING.YES],
-    [FIELDS.PACKING_GIFT_KIND]: ['A bicycle']
+    [FIELDS.NEEDS_PACKING]: [CHOICES.NEEDS_PACKING.YES]
   }));
-  assert.equal(fields.packingStatus, 'Needs wrapping — A bicycle');
+  assert.equal(fields.packingStatus, CHOICES.NEEDS_PACKING.YES);
 });
 
 test('normalizeFormResponse resolves the "already packed in office" choice', () => {
@@ -101,11 +100,10 @@ test('buildCoordinatorMessage reflects the Hospital + packing-needed combination
     [FIELDS.HOSPITAL_NAME]: ['Cedars-Sinai'],
     [FIELDS.HOSPITAL_ROOM]: ['4B-12'],
     [FIELDS.NEEDS_PACKING]: [CHOICES.NEEDS_PACKING.YES],
-    [FIELDS.PACKING_GIFT_KIND]: ['A bicycle'],
     [FIELDS.ADDITIONAL_NOTES]: ['Call security desk on arrival']
   }));
   const message = buildCoordinatorMessage(fields);
   assert.match(message, /📍 DELIVER TO: Hospital — Cedars-Sinai, Room\/Unit 4B-12/);
-  assert.match(message, /PACKING: Needs wrapping — A bicycle/);
+  assert.match(message, /PACKING: Yes, it needs to be packed/);
   assert.match(message, /NOTES: Call security desk on arrival/);
 });
