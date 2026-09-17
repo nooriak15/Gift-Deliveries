@@ -5,7 +5,7 @@ const assert = require('node:assert/strict');
 const { loadGasModules } = require('./loadGas');
 
 const sandbox = loadGasModules(['Constants.gs', 'MessageBuilder.gs']);
-const { normalizeFormResponse, buildCoordinatorMessage, FIELDS } = sandbox;
+const { normalizeFormResponse, buildCoordinatorMessage, FIELDS, CHOICES } = sandbox;
 
 function namedValues(overrides) {
   const base = {
@@ -17,8 +17,7 @@ function namedValues(overrides) {
     [FIELDS.DELIVERY_LOCATION]: ['Home'],
     [FIELDS.HOME_ADDRESS]: ['123 Main St, Los Angeles, CA'],
     [FIELDS.GIFT_REQUEST_DETAILS]: ['LEGO set, nothing Disney'],
-    [FIELDS.NEEDS_PACKING]: ['No'],
-    [FIELDS.PACKING_NOT_NEEDED_REASON]: ['Already packed'],
+    [FIELDS.NEEDS_PACKING]: [CHOICES.NEEDS_PACKING.ALREADY_PACKED],
     [FIELDS.ADDITIONAL_NOTES]: ['']
   };
   return Object.assign(base, overrides);
@@ -49,20 +48,26 @@ test('normalizeFormResponse resolves the Other branch', () => {
   assert.equal(fields.address, '456 Side St');
 });
 
-test('normalizeFormResponse resolves the packing-needed (Yes) branch', () => {
+test('normalizeFormResponse resolves the "yes, needs packing" choice', () => {
   const fields = normalizeFormResponse(namedValues({
-    [FIELDS.NEEDS_PACKING]: ['Yes'],
+    [FIELDS.NEEDS_PACKING]: [CHOICES.NEEDS_PACKING.YES],
     [FIELDS.PACKING_GIFT_KIND]: ['A bicycle']
   }));
   assert.equal(fields.packingStatus, 'Needs wrapping — A bicycle');
 });
 
-test('normalizeFormResponse resolves the packing-not-needed (No) branch', () => {
+test('normalizeFormResponse resolves the "already packed in office" choice', () => {
   const fields = normalizeFormResponse(namedValues({
-    [FIELDS.NEEDS_PACKING]: ['No'],
-    [FIELDS.PACKING_NOT_NEEDED_REASON]: ["Doesn't need packing"]
+    [FIELDS.NEEDS_PACKING]: [CHOICES.NEEDS_PACKING.ALREADY_PACKED]
   }));
-  assert.equal(fields.packingStatus, "Doesn't need packing");
+  assert.equal(fields.packingStatus, CHOICES.NEEDS_PACKING.ALREADY_PACKED);
+});
+
+test('normalizeFormResponse resolves the "packing not needed" choice', () => {
+  const fields = normalizeFormResponse(namedValues({
+    [FIELDS.NEEDS_PACKING]: [CHOICES.NEEDS_PACKING.NOT_NEEDED]
+  }));
+  assert.equal(fields.packingStatus, CHOICES.NEEDS_PACKING.NOT_NEEDED);
 });
 
 test('normalizeFormResponse defaults empty notes to (none)', () => {
@@ -79,7 +84,7 @@ test('buildCoordinatorMessage renders the emoji template by default', () => {
   assert.match(message, /📍 DELIVER TO: Home — 123 Main St, Los Angeles, CA/);
   assert.match(message, /PARENT: Dina Cohen \(555-123-4567\)/);
   assert.match(message, /GIFT: LEGO set, nothing Disney/);
-  assert.match(message, /PACKING: Already packed/);
+  assert.match(message, /PACKING: No, it's already packed in office/);
   assert.match(message, /NOTES: \(none\)/);
 });
 
@@ -95,7 +100,7 @@ test('buildCoordinatorMessage reflects the Hospital + packing-needed combination
     [FIELDS.DELIVERY_LOCATION]: ['Hospital'],
     [FIELDS.HOSPITAL_NAME]: ['Cedars-Sinai'],
     [FIELDS.HOSPITAL_ROOM]: ['4B-12'],
-    [FIELDS.NEEDS_PACKING]: ['Yes'],
+    [FIELDS.NEEDS_PACKING]: [CHOICES.NEEDS_PACKING.YES],
     [FIELDS.PACKING_GIFT_KIND]: ['A bicycle'],
     [FIELDS.ADDITIONAL_NOTES]: ['Call security desk on arrival']
   }));

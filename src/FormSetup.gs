@@ -64,9 +64,12 @@ function SETUP_createGiftDeliveryForm() {
   var pbGiftPacking = form.addPageBreakItem().setTitle('Gift Details');
   form.addParagraphTextItem()
     .setTitle(FIELDS.GIFT_REQUEST_DETAILS)
-    .setHelpText('What gifts, how many, any physical or developmental limitations affecting play, and any religious standards (e.g. no Disney).')
+    .setHelpText('What gifts, how many, the occasion (e.g. birthday or not), any physical or developmental limitations affecting play, and any religious standards (e.g. no Disney).')
     .setRequired(true);
 
+  // Choices are wired up below, once the packing-needed page break exists.
+  // Only the "Yes" choice branches — both "No" choices already carry their
+  // reason in the choice text, so they go straight through to the final page.
   var needsPackingItem = form.addMultipleChoiceItem()
     .setTitle(FIELDS.NEEDS_PACKING)
     .setRequired(true);
@@ -76,13 +79,6 @@ function SETUP_createGiftDeliveryForm() {
   form.addParagraphTextItem()
     .setTitle(FIELDS.PACKING_GIFT_KIND)
     .setHelpText('So whoever packs it knows what they\'re wrapping.')
-    .setRequired(true);
-
-  // --- Branch: packing not needed ---
-  var pbPackingNo = form.addPageBreakItem().setTitle('Packing Details');
-  form.addMultipleChoiceItem()
-    .setTitle(FIELDS.PACKING_NOT_NEEDED_REASON)
-    .setChoiceValues(CHOICES.PACKING_NOT_NEEDED_REASON)
     .setRequired(true);
 
   // --- Converge: final page ---
@@ -100,11 +96,11 @@ function SETUP_createGiftDeliveryForm() {
   pbOther.setGoToPage(pbGiftPacking);
 
   needsPackingItem.setChoices([
-    needsPackingItem.createChoice('Yes', pbPackingYes),
-    needsPackingItem.createChoice('No', pbPackingNo)
+    needsPackingItem.createChoice(CHOICES.NEEDS_PACKING.ALREADY_PACKED, pbFinal),
+    needsPackingItem.createChoice(CHOICES.NEEDS_PACKING.NOT_NEEDED, pbFinal),
+    needsPackingItem.createChoice(CHOICES.NEEDS_PACKING.YES, pbPackingYes)
   ]);
   pbPackingYes.setGoToPage(pbFinal);
-  pbPackingNo.setGoToPage(pbFinal);
 
   pbFinal.setGoToPage(FormApp.PageNavigationType.SUBMIT);
 

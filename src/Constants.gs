@@ -18,17 +18,23 @@ var FIELDS = {
   HOSPITAL_LEGAL_NAME_CONFIRM: "I confirm the child's name entered above is their full legal name, as required for hospital visitor check-in.",
   OTHER_ADDRESS: 'Address',
   GIFT_REQUEST_DETAILS: 'Gift/delivery requests',
-  NEEDS_PACKING: 'Do any of the gifts need to be packed?',
+  NEEDS_PACKING: 'Does this gift need to be packed?',
   PACKING_GIFT_KIND: 'What kind of gift?',
-  PACKING_NOT_NEEDED_REASON: 'Reason',
   ADDITIONAL_NOTES: 'Anything else we should know/keep in mind when organizing delivery?'
 };
 
 var CHOICES = {
-  CLIENT_TYPE: ['Client', 'Sibling', 'Parent'],
+  CLIENT_TYPE: ['Client', 'Sibling'],
   DELIVERY_LOCATION: ['Home', 'Hospital', 'Other'],
-  YES_NO: ['Yes', 'No'],
-  PACKING_NOT_NEEDED_REASON: ['Already packed', "Doesn't need packing"]
+  // A single question with the "no" reason folded directly into the choice
+  // text, rather than a separate Yes/No question plus a follow-up "Reason"
+  // question. Only NEEDS_PACKING.YES branches to the "What kind of gift?"
+  // follow-up page — see FormSetup.gs.
+  NEEDS_PACKING: {
+    ALREADY_PACKED: "No, it's already packed in office",
+    NOT_NEEDED: 'No, packing not needed',
+    YES: 'Yes, it needs to be packed'
+  }
 };
 
 // Script Properties (Project Settings > Script properties) read by Config.gs.
