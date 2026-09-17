@@ -8,7 +8,7 @@
 var FIELDS = {
   CHILD_NAME: 'Child name',
   CHILD_AGE: 'Child age',
-  CLIENT_TYPE: 'Client, Sibling, or Parent',
+  CLIENT_TYPE: 'Client or Sibling',
   DELIVERY_WINDOW: 'Approximate time and day delivery is being requested for?',
   PARENT_NAME_PHONE: 'Parent name and phone number',
   DELIVERY_LOCATION: 'Delivery location',
