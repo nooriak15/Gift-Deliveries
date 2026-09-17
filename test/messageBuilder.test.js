@@ -80,9 +80,9 @@ test('buildCoordinatorMessage renders the emoji template by default', () => {
   const fields = normalizeFormResponse(namedValues());
   const message = buildCoordinatorMessage(fields);
   assert.match(message, /^🎁 NEW GIFT REQUEST/);
-  assert.match(message, /Child: Ari, age 7 — Client/);
+  assert.match(message, /Child: Ari, age 7 \(Client\)/);
   assert.match(message, /📅 WHEN: Anytime Friday, birthday is 9\/20/);
-  assert.match(message, /📍 DELIVER TO: Home — 123 Main St, Los Angeles, CA/);
+  assert.match(message, /📍 DELIVER TO: Home\n123 Main St, Los Angeles, CA/);
   assert.match(message, /PARENT: Dina Cohen \(555-123-4567\)/);
   assert.match(message, /GIFT: LEGO set, nothing Disney/);
   assert.match(message, /PACKING: No, it's already packed in office/);
@@ -106,7 +106,7 @@ test('buildCoordinatorMessage reflects the Hospital + packing-needed combination
     [FIELDS.ADDITIONAL_NOTES]: ['Call security desk on arrival']
   }));
   const message = buildCoordinatorMessage(fields);
-  assert.match(message, /📍 DELIVER TO: Hospital — Cedars-Sinai, Room\/Unit 4B-12/);
+  assert.match(message, /📍 DELIVER TO: Hospital\nCedars-Sinai, Room\/Unit 4B-12/);
   assert.match(message, /LEGAL NAME \(for check-in\): Ari$/m);
   assert.match(message, /PACKING: Yes, it needs to be packed/);
   assert.match(message, /NOTES: Call security desk on arrival/);

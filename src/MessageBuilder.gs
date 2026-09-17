@@ -62,10 +62,11 @@ function buildCoordinatorMessage(fields, emojiStyle) {
   var lines = [
     giftLabel,
     '',
-    'Child: ' + fields.childName + ', age ' + fields.childAge + ' — ' + fields.clientType,
+    'Child: ' + fields.childName + ', age ' + fields.childAge + ' (' + fields.clientType + ')',
     '',
     whenLabel + ': ' + fields.deliveryWindow,
-    deliverToLabel + ': ' + fields.deliveryLocationType + ' — ' + fields.address
+    deliverToLabel + ': ' + fields.deliveryLocationType,
+    fields.address
   ];
 
   // Hospital deliveries collect a dedicated legal-name field (rather than
